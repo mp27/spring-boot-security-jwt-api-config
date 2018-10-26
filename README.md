@@ -32,4 +32,7 @@ GET /api/users/{username}
 - [x] create user profile
 - [x] add service layers
 - [ ] user verification with email confirmation
+- [ ] create user notifications
+- [ ] update user roles
+- [ ] database schema migration with Flyway or liquibase
 - [ ] add documentation (with swagger and readme file)
