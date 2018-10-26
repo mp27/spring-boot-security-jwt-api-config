@@ -20,11 +20,16 @@ INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 ```$xslt
 POST /api/auth/signin
 POST /api/auth/signup
+GET /api/users/me
+GET /api/user/checkUsernameAvailability?username=
+GET /api/user/checkEmailAvailability?email=
+GET /api/users/{username}
 ```
 #### TODO
 - [x] create user and role entity
 - [x] add security configuration
 - [x] create auth controller endpoints
 - [x] create user profile
-- [ ] add service layers
+- [x] add service layers
+- [ ] user verification with email confirmation
 - [ ] add documentation (with swagger and readme file)
