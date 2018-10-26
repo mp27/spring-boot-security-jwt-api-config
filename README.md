@@ -1,4 +1,14 @@
 # Spring Boot with security configuration and JWT authentification
+####Dependencies
+* Spring Boot 2
+* Data JPA
+* Dev Tools
+* Starter Web
+* Mysql
+* Spring Security
+* io.jsonwebtoken
+* Jackson
+* Project Lombok
 
 #### SQL
 ```sql
