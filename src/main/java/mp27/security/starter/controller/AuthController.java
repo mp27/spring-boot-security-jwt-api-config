@@ -8,8 +8,8 @@ import mp27.security.starter.payload.ApiResponse;
 import mp27.security.starter.payload.JwtAuthenticationResponse;
 import mp27.security.starter.payload.LoginRequest;
 import mp27.security.starter.payload.SignUpRequest;
-import mp27.security.starter.repository.RoleRepository;
 import mp27.security.starter.security.JwtTokenProvider;
+import mp27.security.starter.service.RoleService;
 import mp27.security.starter.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,15 +40,15 @@ public class AuthController {
 
     private final JwtTokenProvider tokenProvider;
 
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
 
     public AuthController(UserService userService, AuthenticationManager authenticationManager,
-                          PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider, RoleRepository roleRepository) {
+                          PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider, RoleService roleService) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
     }
 
     @PostMapping("/signin")
@@ -82,7 +82,7 @@ public class AuthController {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+        Role userRole = roleService.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new AppException("User Role not set."));
 
         user.setRoles(Collections.singleton(userRole));
