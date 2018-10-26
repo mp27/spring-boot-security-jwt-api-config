@@ -14,6 +14,7 @@ POST /api/auth/signup
 #### TODO
 - [x] create user and role entity
 - [x] add security configuration
+- [x] create auth controller endpoints
 - [ ] add service layers
 - [ ] create user profile
 - [ ] add documentation (with swagger and readme file)
