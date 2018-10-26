@@ -1,5 +1,5 @@
 # Spring Boot with security configuration and JWT authentification
-### Dependencies
+#### Dependencies
 * Spring Boot 2
 * Data JPA
 * Dev Tools
