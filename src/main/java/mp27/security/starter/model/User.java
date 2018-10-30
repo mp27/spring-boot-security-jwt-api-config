@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
@@ -47,16 +46,25 @@ public class User extends DateAudit {
     @Size(max = 100)
     private String password;
 
+    @Column(name = "enabled")
+    private Boolean enabled;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User(@NotBlank @Size(max = 40) String name, @NotBlank @Size(max = 15) String username, @NotBlank @Size(max = 40) @Email String email, @NotBlank @Size(max = 100) String password) {
+    public User(@NotBlank @Size(max = 40) String name, @NotBlank @Size(max = 15) String username, @NotBlank @Size(max = 40) @Email String email, @NotBlank @Size(max = 100) String password, Boolean enabled) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.enabled = enabled;
+    }
+
+    public User(){
+        super();
+        this.enabled = false;
     }
 }

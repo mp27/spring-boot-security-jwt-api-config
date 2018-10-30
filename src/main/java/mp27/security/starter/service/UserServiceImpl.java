@@ -1,7 +1,9 @@
 package mp27.security.starter.service;
 
 import mp27.security.starter.model.User;
+import mp27.security.starter.model.VerificationToken;
 import mp27.security.starter.repository.UserRepository;
+import mp27.security.starter.repository.VerificationTokenRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +13,11 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, VerificationTokenRepository verificationTokenRepository) {
         this.userRepository = userRepository;
+        this.verificationTokenRepository = verificationTokenRepository;
     }
 
     @Override
@@ -64,5 +68,16 @@ public class UserServiceImpl implements UserService{
     @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public void createVerificationToken(User user, String token) {
+        VerificationToken verificationToken = new VerificationToken(user, token);
+        verificationTokenRepository.save(verificationToken);
+    }
+
+    @Override
+    public VerificationToken getVerificationToken(String verificationToken) {
+        return verificationTokenRepository.findByToken(verificationToken).orElse(null);
     }
 }

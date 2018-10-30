@@ -31,7 +31,8 @@ GET /api/users/{username}
 - [x] create auth controller endpoints
 - [x] create user profile
 - [x] add service layers
-- [ ] user verification with email confirmation
+- [x] user verification with email confirmation
+- [x] add yaml app configuration
 - [ ] change user password
 - [ ] admin list users
 - [ ] create user notifications

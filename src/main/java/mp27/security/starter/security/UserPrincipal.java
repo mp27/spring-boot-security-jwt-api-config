@@ -29,18 +29,22 @@ public class UserPrincipal implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
+    @JsonIgnore
+    private Boolean enabled;
+
     public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
                 new SimpleGrantedAuthority(role.getName().name())
         ).collect(Collectors.toList());
 
         return new UserPrincipal(
-            user.getId(),
-            user.getName(),
-            user.getUsername(),
-            user.getEmail(),
-            user.getPassword(),
-            authorities
+                user.getId(),
+                user.getName(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPassword(),
+                authorities,
+                user.getEnabled()
         );
     }
 
@@ -61,6 +65,6 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return getEnabled();
     }
 }
