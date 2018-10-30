@@ -42,4 +42,9 @@ public class VerificationToken {
         this.token = token;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
+
+    public Boolean isExpired(){
+        Calendar calendar = Calendar.getInstance();
+        return getExpiryDate().getTime() - calendar.getTime().getTime() <= 0;
+    }
 }

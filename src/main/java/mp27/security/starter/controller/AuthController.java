@@ -2,15 +2,13 @@ package mp27.security.starter.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import mp27.security.starter.event.OnRegistrationCompleteEvent;
+import mp27.security.starter.event.OnResendConfirmationEvent;
 import mp27.security.starter.exception.AppException;
 import mp27.security.starter.model.Role;
 import mp27.security.starter.model.RoleName;
 import mp27.security.starter.model.User;
 import mp27.security.starter.model.VerificationToken;
-import mp27.security.starter.payload.ApiResponse;
-import mp27.security.starter.payload.JwtAuthenticationResponse;
-import mp27.security.starter.payload.LoginRequest;
-import mp27.security.starter.payload.SignUpRequest;
+import mp27.security.starter.payload.*;
 import mp27.security.starter.security.JwtTokenProvider;
 import mp27.security.starter.service.RoleService;
 import mp27.security.starter.service.UserService;
@@ -28,7 +26,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
@@ -133,8 +130,7 @@ public class AuthController {
 
         if (user.getId() != null && user.getEmail().equals(email)) {
 
-            Calendar calendar = Calendar.getInstance();
-            if (verificationToken.getExpiryDate().getTime() - calendar.getTime().getTime() <= 0) {
+            if (verificationToken.isExpired()) {
                 return new ResponseEntity<>(new ApiResponse(false, "The provided token  is expired!"),
                         HttpStatus.BAD_REQUEST);
             }
@@ -148,6 +144,38 @@ public class AuthController {
 
         return new ResponseEntity<>(new ApiResponse(false, "The provided user  is invalid!"),
                 HttpStatus.BAD_REQUEST);
+    }
 
+    @PostMapping("/resend-confirmation-email")
+    public ResponseEntity<?> resendConfirmationEmail(@Valid @RequestBody EmailRequest emailRequest) {
+        Optional<User> optionalUser = userService.findByEmail(emailRequest.getEmail());
+
+        if (!optionalUser.isPresent()) {
+            return new ResponseEntity<>(new ApiResponse(false, "The provided email  is invalid or doesn't exist!"),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        User user = optionalUser.get();
+
+        if (user.getEmail().equals(emailRequest.getEmail()) && user.getId() != null) {
+            if (!user.getEnabled()) {
+
+                Locale locale = Locale.getDefault();
+                String confirmLocation = ServletUriComponentsBuilder
+                        .fromCurrentContextPath()
+                        .path("/api/auth/registration-confirm")
+                        .toUriString();
+
+                applicationEventPublisher.publishEvent(new OnResendConfirmationEvent(user, locale, confirmLocation));
+
+                return new ResponseEntity<>(new ApiResponse(true, "Email sent"), HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>(new ApiResponse(false, "The user is already confirmed"),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new ApiResponse(false, "The provided user  is invalid!"),
+                HttpStatus.BAD_REQUEST);
     }
 }

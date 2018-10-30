@@ -3,12 +3,9 @@ package mp27.security.starter.listener;
 import lombok.extern.slf4j.Slf4j;
 import mp27.security.starter.event.OnRegistrationCompleteEvent;
 import mp27.security.starter.model.User;
+import mp27.security.starter.service.MailService;
 import mp27.security.starter.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.MessageSource;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -18,15 +15,12 @@ import java.util.UUID;
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
 
     private final UserService userService;
+    private final MailService mailService;
 
-    private MessageSource messageSource;
 
-    @Autowired
-    private JavaMailSender mailSender;
-
-    public RegistrationListener(UserService userService, MessageSource messageSource, JavaMailSender mailSender) {
+    public RegistrationListener(UserService userService, MailService mailService) {
         this.userService = userService;
-        this.messageSource = messageSource;
+        this.mailService = mailService;
     }
 
     @Override
@@ -44,10 +38,6 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         String confirmationUrl = event.getAppUrl() + "?token=" + token + "&email=" + user.getEmail();
         String message = "User registered , please confirm your email \n";
 
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(recipientAddress);
-        simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(message  + confirmationUrl);
-        mailSender.send(simpleMailMessage);
+        mailService.sendMail(recipientAddress, subject, message + confirmationUrl);
     }
 }
